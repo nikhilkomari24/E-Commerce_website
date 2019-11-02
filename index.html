@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <title>ECE 9065 - Lab 2</title>
+        <meta charset="UTF-8">
+        <script type='text/javascript' src='script.js'></script>
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+</head>
+
+<body background="images/background.jpg">
+        <div id='mainpage'>
+                <div class="login-box">
+                        <h1>Login</h1>
+                        <p id="head"></p>
+                        <div class="textbox">
+                                <input type="text" placeholder="Username" id="name" />
+                        </div>
+                        <p id="p1"></p>
+                        <p id="p2"></p>
+                        <div class="textbox">
+                                <input type="text" placeholder="Email" id="email" />
+                        </div>
+                        <p id="p3"></p>
+                        <div class="textbox">
+                                <input type="text" placeholder="Year Of Birth" id="birth-year" />
+                        </div>
+                        <p id="p4"></p>
+                        <input id="submit" type="submit" value="Sign in" onclick="return formValidation()" />
+                </div>
+        </div>
+        <div id='secondpage'>
+                <h1 style="text-align: center;">Library</h1>
+                <nav>
+                        <p>User :</p>
+                        <p id="name2" style="display: inline;"></p>
+                        <p id="email2" style="display: inline;"></p>
+                        <p id="age" style="display: inline;"></p>
+                        <p>Language :</p>
+                        <div id='lanchan'>
+                                <a href="#" onclick="changeLang(1)">[English&nbsp;</a>
+                                /
+                                <a href="#" onclick="changeLang(2)">&nbsp;French]</a>
+                        </div>
+                        <img src="images/exit.png" id="lobutton" onclick="LogOut();" />
+
+                </nav>
+                <h2 style="text-align: center;">Items Available</h2>
+                
+                <button id="cobutton" onclick="checkOutPage()"> Shopping Cart <i class="fas fa-shopping-cart"></i></button>
+                <button id="additembutton" onclick="addItem()">Add Item to List</button>
+                <table id="lib1">
+
+                </table>
+        </div>
+        <div id='checkoutpage'>
+                <h2 style="text-align: center;"> Checkout List</h2>
+                <button id="backbutton" onclick="backToLibrary()">Back</button>
+                <table id='coLib'>
+
+                </table>
+                <button id="fcobutton" onclick="confirmPurchase()">Buy</button>
+        </div>
+</body>
+
+</html>
