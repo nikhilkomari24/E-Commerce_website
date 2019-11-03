@@ -71,7 +71,7 @@ app.put('/editbyadmin', (request, response) => {
                 response.send({ success: "true" })
             }
 
-    });
+        });
 })
 
 app.delete('/delbyadmin', (request, response) => {
@@ -90,5 +90,13 @@ app.delete('/delbyadmin', (request, response) => {
 
 app.delete('/purchased', (request, response) => {
     console.log('purchase item successful');
+    mongoose.connection.db.collection('masterList').deleteMany({ 'Name': { $in: request.body.Name } }, (err, mongooseDeleteResult) => {
+        if (err) {
+            response.send({ success: "false" });
+        }
+        else {
+            response.send({ success: "true" })
+        }
+    });
 })
 

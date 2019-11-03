@@ -200,7 +200,31 @@ function confirmPurchase() {
         count = 0;
         //coList = [];
         //gencoLib();
-        
+
+        var newarr = [];
+        coList.forEach(x => { newarr.push(x.Name) });
+        var url = '/purchased';
+        //console.log(url)
+        let puritem = JSON.stringify({
+            Name: newarr
+        })
+        let options = {
+            method: 'DELETE',
+            body: puritem,
+            //headers: new Headers({
+            headers: {
+                'Content-Type': 'application/json',
+                //'Validated': 'true'
+            }
+        }
+
+        fetch(url, (options))
+        genLibServer().then(function (json) {
+            masterList = json;
+            coList = [];
+            gencoLib();
+        });
+
         document.getElementById('cobutton').innerHTML = 'Shopping Cart <i class="fas fa-shopping-cart"></i>';
         document.getElementById('checkoutpage').style.display = "none";
         document.getElementById('secondpage').style.display = "block";
