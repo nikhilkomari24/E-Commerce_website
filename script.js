@@ -35,6 +35,8 @@ var currentLang = null;
 var aFlag1 = 0;// set when the user is admin
 var aFlag2 = 0;// set when year of birth is 1867
 var j = 0;// item number used in edititem and saveitem functions
+var ename='';
+var etype='';
 
 
 
@@ -374,7 +376,7 @@ function addNew() {
                     console.log(masterList);
                     genLib();
                     document.getElementById('additembutton').style.display = "block";
-                });                
+                });
             } else {
                 alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
             }
@@ -395,7 +397,8 @@ function cancelAdd() {
 
 //Function to edit an item by admin
 function edititem(i) {
-
+    ename = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
+    etype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
     var duecell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[3];
     var buttoncell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[4];
     buttoncell.innerHTML = '<button type="button" id="save_click" onclick="saveitem()">Save</button><button type="button" id="cancel_click" onclick="cancelsave()">Cancel</button></td></tr>';
@@ -414,6 +417,29 @@ function saveitem() {
     } else {
         //masterList[j - 1].Due = duevalue;
         //genLib();
+        var url = '/editbyadmin';
+        //console.log(url)
+        let edititem = JSON.stringify({
+            Name: ename,
+            Type: etype,
+            Due: duevalue
+        })
+        let options = {
+            method: 'PUT',
+            body: edititem,
+            //headers: new Headers({
+            headers: {
+                'Content-Type': 'application/json',
+                //'Validated': 'true'
+            }
+        }
+
+        fetch(url, (options));
+        genLibServer().then(function (json) {
+            masterList = json;
+            console.log(masterList);
+            genLib();
+        });
     }
 }
 
@@ -426,30 +452,6 @@ function cancelsave() {
 
 //Function to delete an item by admin
 function delitem(i) {
-    var dname = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
-    var dtype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
-    var url = '/delbyadmin';
-    //console.log(url)
-    let delitem = JSON.stringify({
-        Name: dname,
-        Type: dtype
-    })
-    let options = {
-        method: 'DELETE',
-        body: delitem,
-        //headers: new Headers({
-        headers: {
-            'Content-Type': 'application/json',
-            //'Validated': 'true'
-        }
-    }
-
-    fetch(url, (options))
-    genLibServer().then(function (json) {
-        masterList = json;
-        console.log(masterList);
-        genLib();
-    });
     //masterList.splice(i.id.split('_')[1] - 1, 1);
     //genLib();
 }

@@ -60,7 +60,18 @@ app.post('/addbyadmin', (request, response) => {
 })
 
 app.put('/editbyadmin', (request, response) => {
-    console.log('put edit successful');
+    //console.log('put edit successful');
+    mongoose.connection.db.collection('masterList')
+        .updateOne({ Name: request.body.Name, Type: request.body.Type }, { $set: { Due: request.body.Due } }, {}, function (err, output) {
+            if (err) {
+                response.send({ success: "false", response: errtxt })
+            }
+            else {
+                console.log(output.result["ok"])
+                response.send({ success: "true" })
+            }
+
+    });
 })
 
 app.delete('/delbyadmin', (request, response) => {
