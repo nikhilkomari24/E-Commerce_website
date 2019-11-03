@@ -35,8 +35,8 @@ var currentLang = null;
 var aFlag1 = 0;// set when the user is admin
 var aFlag2 = 0;// set when year of birth is 1867
 var j = 0;// item number used in edititem and saveitem functions
-var ename='';
-var etype='';
+var ename = '';
+var etype = '';
 
 
 
@@ -200,29 +200,7 @@ function confirmPurchase() {
         count = 0;
         //coList = [];
         //gencoLib();
-        var newarr = [];
-        coList.forEach(x => { newarr.push(x.Name) });
-        var url = '/purchased';
-        //console.log(url)
-        let puritem = JSON.stringify({
-            Name: newarr
-        })
-        let options = {
-            method: 'DELETE',
-            body: puritem,
-            //headers: new Headers({
-            headers: {
-                'Content-Type': 'application/json',
-                //'Validated': 'true'
-            }
-        }
-
-        fetch(url, (options))
-        genLibServer().then(function (json) {
-            masterList = json;
-            coList = [];
-            gencoLib();
-        });
+        
         document.getElementById('cobutton').innerHTML = 'Shopping Cart <i class="fas fa-shopping-cart"></i>';
         document.getElementById('checkoutpage').style.display = "none";
         document.getElementById('secondpage').style.display = "block";
@@ -452,6 +430,30 @@ function cancelsave() {
 
 //Function to delete an item by admin
 function delitem(i) {
+    var dname = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
+    var dtype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
+    var url = '/delbyadmin';
+    //console.log(url)
+    let delitem = JSON.stringify({
+        Name: dname,
+        Type: dtype
+    })
+    let options = {
+        method: 'DELETE',
+        body: delitem,
+        //headers: new Headers({
+        headers: {
+            'Content-Type': 'application/json',
+            //'Validated': 'true'
+        }
+    }
+
+    fetch(url, (options))
+    genLibServer().then(function (json) {
+        masterList = json;
+        console.log(masterList);
+        genLib();
+    });
     //masterList.splice(i.id.split('_')[1] - 1, 1);
     //genLib();
 }

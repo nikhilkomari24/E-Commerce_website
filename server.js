@@ -75,7 +75,17 @@ app.put('/editbyadmin', (request, response) => {
 })
 
 app.delete('/delbyadmin', (request, response) => {
-    console.log('delete item successful');
+    //console.log('delete item successful');
+    mongoose.connection.db.collection('masterList').deleteOne({ Name: request.body.Name, Type: request.body.Type }, (err, output) => {
+        if (err) {
+            response.send({ success: "false" });
+
+        }
+        else {
+            response.send({ success: "true" })
+        }
+    });
+
 })
 
 app.delete('/purchased', (request, response) => {
