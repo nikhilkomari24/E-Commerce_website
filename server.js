@@ -45,8 +45,18 @@ app.get('/genlibrary', (request, response) => {
 });
 
 app.post('/addbyadmin', (request, response) => {
-    masterList.unshift(request.body);
-    console.log(masterList);
+    //masterList.unshift(request.body);
+    //console.log(masterList);
+    mongoose.connection.db.collection('masterList').insertOne(request.body, function (err, output) {
+        if (err) {
+            response.send({ success: "false" });
+        }
+        else {
+            response.send({ success: "true" })
+
+        }
+
+    });
 })
 
 app.put('/editbyadmin', (request, response) => {

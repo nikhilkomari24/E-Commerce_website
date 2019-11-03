@@ -350,7 +350,6 @@ function addNew() {
             if (!(isNaN(newdue)) && (newdue != '') && (newdue == 30 || newdue == 10)) {
                 //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
                 //masterList.unshift(newdict);
-                //var url = location.href.concat("insertNewItem").replace('#', '');
                 var url = '/addbyadmin';
                 //console.log(url)
                 let newitem = JSON.stringify({
@@ -375,7 +374,7 @@ function addNew() {
                     console.log(masterList);
                     genLib();
                     document.getElementById('additembutton').style.display = "block";
-                });
+                });                
             } else {
                 alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
             }
@@ -413,29 +412,6 @@ function saveitem() {
     if (isNaN(duevalue) || duevalue == '') {
         alert("Please enter a valid number");
     } else {
-        var url = '/editbyadmin';
-        //console.log(url)
-        let edititem = JSON.stringify({
-            //Name: ename.value,
-            //Type: etype.value,
-            Due: duevalue
-        })
-        let options = {
-            method: 'PUT',
-            body: edititem,
-            //headers: new Headers({
-            headers: {
-                'Content-Type': 'application/json',
-                //'Validated': 'true'
-            }
-        }
-
-        fetch(url, (options));
-        genLibServer().then(function (json) {
-            masterList = json;
-            console.log(masterList);
-            genLib();
-        });
         //masterList[j - 1].Due = duevalue;
         //genLib();
     }
