@@ -1,15 +1,15 @@
-var masterList = [
-    { Name: 'HOBBIT', Due: '30', Type: 'Book', Picture: 'hobbit.jpg' },
-    { Name: 'HUSH', Due: '30', Type: 'Book', Picture: 'Hush.jpg' },
-    { Name: 'HOUND', Due: '30', Type: 'Book', Picture: 'hound.jpg' },
-    { Name: 'ORIENTEXPRESS', Due: '30', Type: 'Book', Picture: 'orientexpress.jpg' },
-    { Name: 'PYTHON', Due: '30', Type: 'Book', Picture: 'python.jpg' },
-    { Name: 'XMEN', Due: '10', Type: 'CD', Picture: 'XMEN.jpg' },
-    { Name: 'TRANSFORMERS', Due: '10', Type: 'CD', Picture: 'transformers.jpg' },
-    { Name: 'WARHORSE', Due: '10', Type: 'CD', Picture: 'warhorse.jpg' },
-    { Name: 'LIFE', Due: '10', Type: 'CD', Picture: 'life.jpg' },
-    { Name: 'ALITA', Due: '10', Type: 'CD', Picture: 'alita.jpg' }
-];
+//var masterList = [
+//    { Name: 'HOBBIT', Due: '30', Type: 'Book', Picture: 'hobbit.jpg' },
+//    { Name: 'HUSH', Due: '30', Type: 'Book', Picture: 'Hush.jpg' },
+//    { Name: 'HOUND', Due: '30', Type: 'Book', Picture: 'hound.jpg' },
+//    { Name: 'ORIENTEXPRESS', Due: '30', Type: 'Book', Picture: 'orientexpress.jpg' },
+//    { Name: 'PYTHON', Due: '30', Type: 'Book', Picture: 'python.jpg' },
+//    { Name: 'XMEN', Due: '10', Type: 'CD', Picture: 'XMEN.jpg' },
+//    { Name: 'TRANSFORMERS', Due: '10', Type: 'CD', Picture: 'transformers.jpg' },
+//    { Name: 'WARHORSE', Due: '10', Type: 'CD', Picture: 'warhorse.jpg' },
+//    { Name: 'LIFE', Due: '10', Type: 'CD', Picture: 'life.jpg' },
+//    { Name: 'ALITA', Due: '10', Type: 'CD', Picture: 'alita.jpg' }
+//];
 
 var langArr = [
     { ENG: 'HOBBIT', FR: 'HOBBIT' },
@@ -25,6 +25,7 @@ var langArr = [
     { ENG: 'PULSE', FR: 'IMPULSION' },
 ];
 
+var masterList = null;
 var coList = [];// Check out list array
 var ageFormat = '';
 var emailFormat = '';
@@ -85,7 +86,13 @@ function formValidation() {
                         document.querySelector('#email2').innerHTML = emailFormat;
                         document.querySelector('#age').innerHTML = ageFormat;
                     }
-                    genLib();
+
+                    //genLib();
+                    genLibServer().then(function (json) {
+                        masterList = json;
+                        console.log(masterList);
+                        genLib();
+                    });
                     return true;
                 }
             }
@@ -94,6 +101,26 @@ function formValidation() {
     return false;
 }
 
+//asynchronous function
+async function genLibServer() {
+
+    //var respObj = null, isValid = false;
+    //var url = location.href.concat("getAllItems").replace('#', '');
+    var url = '/genlibrary';
+    let options = {
+        method: 'GET',
+        //headers: new Headers({
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            //'Validated': 'true'
+        }
+    }
+    const response = await fetch(url, (options));
+    const json = await response.json();
+    return json;
+
+}
 //function to change language
 function changeLang(value) {
     if (value == 1 && currentLang !== value) {
@@ -169,8 +196,31 @@ function confirmPurchase() {
     if (confirm("You are about to purchase " + coList.length + " items, please confirm.")) {
         alert("purchased");
         count = 0;
-        coList = [];
-        gencoLib();
+        //coList = [];
+        //gencoLib();
+        var newarr = [];
+        coList.forEach(x => { newarr.push(x.Name) });
+        var url = '/purchased';
+        //console.log(url)
+        let puritem = JSON.stringify({
+            Name: newarr
+        })
+        let options = {
+            method: 'DELETE',
+            body: puritem,
+            //headers: new Headers({
+            headers: {
+                'Content-Type': 'application/json',
+                //'Validated': 'true'
+            }
+        }
+
+        fetch(url, (options))
+        genLibServer().then(function (json) {
+            masterList = json;
+            coList = [];
+            gencoLib();
+        });
         document.getElementById('cobutton').innerHTML = 'Shopping Cart <i class="fas fa-shopping-cart"></i>';
         document.getElementById('checkoutpage').style.display = "none";
         document.getElementById('secondpage').style.display = "block";
@@ -298,10 +348,34 @@ function addNew() {
     if (newname.match(alphaExp)) {
         if (newtype.match(alphaExp) && (newtype == 'Book' || newtype == 'CD')) {
             if (!(isNaN(newdue)) && (newdue != '') && (newdue == 30 || newdue == 10)) {
-                newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
-                masterList.unshift(newdict);
-                genLib();
-                document.getElementById('additembutton').style.display = "block";
+                //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
+                //masterList.unshift(newdict);
+                //var url = location.href.concat("insertNewItem").replace('#', '');
+                var url = '/addbyadmin';
+                //console.log(url)
+                let newitem = JSON.stringify({
+                    Picture: 'pulse.jpg',
+                    Name: newname,
+                    Type: newtype,
+                    Due: newdue
+                })
+                let options = {
+                    method: 'POST',
+                    body: newitem,
+                    //headers: new Headers({
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //'Validated': 'true'
+                    }
+                }
+
+                fetch(url, (options))
+                genLibServer().then(function (json) {
+                    masterList = json;
+                    console.log(masterList);
+                    genLib();
+                    document.getElementById('additembutton').style.display = "block";
+                });
             } else {
                 alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
             }
@@ -333,12 +407,37 @@ function edititem(i) {
 
 //function to save changes after editing an item's due 
 function saveitem() {
+    //var ename = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1];
+    //var etype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2];
     var duevalue = document.getElementById("changedue").value;
     if (isNaN(duevalue) || duevalue == '') {
         alert("Please enter a valid number");
     } else {
-        masterList[j - 1].Due = duevalue;
-        genLib();
+        var url = '/editbyadmin';
+        //console.log(url)
+        let edititem = JSON.stringify({
+            //Name: ename.value,
+            //Type: etype.value,
+            Due: duevalue
+        })
+        let options = {
+            method: 'PUT',
+            body: edititem,
+            //headers: new Headers({
+            headers: {
+                'Content-Type': 'application/json',
+                //'Validated': 'true'
+            }
+        }
+
+        fetch(url, (options));
+        genLibServer().then(function (json) {
+            masterList = json;
+            console.log(masterList);
+            genLib();
+        });
+        //masterList[j - 1].Due = duevalue;
+        //genLib();
     }
 }
 
@@ -349,10 +448,34 @@ function cancelsave() {
 }
 
 
-//Function to edit an item by admin
+//Function to delete an item by admin
 function delitem(i) {
-    masterList.splice(i.id.split('_')[1] - 1, 1);
-    genLib();
+    var dname = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
+    var dtype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
+    var url = '/delbyadmin';
+    //console.log(url)
+    let delitem = JSON.stringify({
+        Name: dname,
+        Type: dtype
+    })
+    let options = {
+        method: 'DELETE',
+        body: delitem,
+        //headers: new Headers({
+        headers: {
+            'Content-Type': 'application/json',
+            //'Validated': 'true'
+        }
+    }
+
+    fetch(url, (options))
+    genLibServer().then(function (json) {
+        masterList = json;
+        console.log(masterList);
+        genLib();
+    });
+    //masterList.splice(i.id.split('_')[1] - 1, 1);
+    //genLib();
 }
 
 // Function that checks whether the input characters are restricted according to defined by user.
