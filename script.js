@@ -217,14 +217,19 @@ function confirmPurchase() {
                 //'Validated': 'true'
             }
         }
-
-        fetch(url, (options))
-        genLibServer().then(function (json) {
-            masterList = json;
-            coList = [];
-            gencoLib();
-        });
-
+        fetch(url, (options)).then((response) => response.json())
+            .then(function (resp) {
+                if (resp["success"]) {
+                    genLibServer().then(function (json) {
+                        masterList = json;
+                        coList = [];
+                        gencoLib();
+                    });
+                }
+                else {
+                    console.log(resp);
+                }
+        })
         document.getElementById('cobutton').innerHTML = 'Shopping Cart <i class="fas fa-shopping-cart"></i>';
         document.getElementById('checkoutpage').style.display = "none";
         document.getElementById('secondpage').style.display = "block";
@@ -372,13 +377,20 @@ function addNew() {
                     }
                 }
 
-                fetch(url, (options))
-                genLibServer().then(function (json) {
-                    masterList = json;
-                    console.log(masterList);
-                    genLib();
-                    document.getElementById('additembutton').style.display = "block";
-                });
+                fetch(url, (options)).then((response) => response.json())
+                    .then(function (resp) {
+                        if (resp["success"]) {
+                            genLibServer().then(function (json) {
+                                masterList = json;
+                                console.log(masterList);
+                                genLib();
+                                document.getElementById('additembutton').style.display = "block";
+                            });
+                        }
+                        else {
+                            console.log(resp);
+                        }
+                    })
             } else {
                 alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
             }
@@ -435,13 +447,19 @@ function saveitem() {
                 //'Validated': 'true'
             }
         }
-
-        fetch(url, (options));
-        genLibServer().then(function (json) {
-            masterList = json;
-            console.log(masterList);
-            genLib();
-        });
+        fetch(url, (options)).then((response) => response.json())
+            .then(function (resp) {
+                if (resp["success"]) {
+                    genLibServer().then(function (json) {
+                        masterList = json;
+                        console.log(masterList);
+                        genLib();
+                    });
+                }
+                else {
+                    console.log(resp);
+                }
+            })
     }
 }
 
@@ -471,13 +489,19 @@ function delitem(i) {
             //'Validated': 'true'
         }
     }
-
-    fetch(url, (options))
-    genLibServer().then(function (json) {
-        masterList = json;
-        console.log(masterList);
-        genLib();
-    });
+    fetch(url, (options)).then((response) => response.json())
+        .then(function (resp) {
+            if (resp["success"]) {
+                genLibServer().then(function (json) {
+                    masterList = json;
+                    console.log(masterList);
+                    genLib();
+                });
+            }
+            else {
+                console.log(resp);
+            }
+        })
     //masterList.splice(i.id.split('_')[1] - 1, 1);
     //genLib();
 }

@@ -29,6 +29,44 @@ function find(name, query, cb) {
     });
 }
 
+//input validations
+
+// Function that checks whether input text is an alphabetic character or not.
+function inputAlphabet(inputtext) {
+    var alphaExp = /^[a-zA-Z\s]+$/;
+    if (inputtext.match(alphaExp)) {
+        //document.getElementById('p1').innerText = '';
+        return true;
+    } else {
+        //document.getElementById('p1').innerText = "* For your name please use alphabets only *"; // This segment displays the validation rule for name.
+        //inputtext.focus();
+        return false;
+    }
+}
+
+//Function to validate type
+function validateType(type) {
+    switch (type.toLowerCase()) {
+        case "book":
+            return true;
+        case "cd":
+            return true;
+        default:
+            //errMsg += 'Type can be either Book/CD||'
+            return false;
+    }
+}
+
+//function to validate due value
+function validateDue(dueValue) {
+    var filter = new RegExp('^[0-9]+$');
+    if (!filter.test(dueValue)) {
+        //errMsg += 'Due days should be a integer||'
+        return false;
+    }
+    return true;
+}
+
 app.get('/genlibrary', (request, response) => {
     var respObj = [];
     find('masterList', {}, function (err, docs) {
@@ -47,31 +85,54 @@ app.get('/genlibrary', (request, response) => {
 app.post('/addbyadmin', (request, response) => {
     //masterList.unshift(request.body);
     //console.log(masterList);
-    mongoose.connection.db.collection('masterList').insertOne(request.body, function (err, output) {
-        if (err) {
+    aName = request.body.Name
+    aDue = request.body.Due
+    aType = request.body.Type
+    if (inputAlphabet(aName)) {
+        if (validateDue(aDue)) {
+            if (validateType(aType)) {
+                mongoose.connection.db.collection('masterList').insertOne(request.body, function (err, output) {
+                    if (err) {
+                        response.send({ success: "false" });
+                    }
+                    else {
+                        response.send({ success: "true" })
+
+                    }
+
+                });
+            } else {
+                response.send({ success: "false" });
+            }
+        } else {
             response.send({ success: "false" });
         }
-        else {
-            response.send({ success: "true" })
+    } else {
+        response.send({ success: "false" });
+    }
 
-        }
-
-    });
 })
 
 app.put('/editbyadmin', (request, response) => {
-    //console.log('put edit successful');
-    mongoose.connection.db.collection('masterList')
-        .updateOne({ Name: request.body.Name, Type: request.body.Type }, { $set: { Due: request.body.Due } }, {}, function (err, output) {
-            if (err) {
-                response.send({ success: "false", response: errtxt })
-            }
-            else {
-                console.log(output.result["ok"])
-                response.send({ success: "true" })
-            }
+    if (validateType(request.body.Type)) {
+        if (validateDue(request.body.Due)) {
+            mongoose.connection.db.collection('masterList')
+                .updateOne({ Name: request.body.Name, Type: request.body.Type }, { $set: { Due: request.body.Due } }, {}, function (err, output) {
+                    if (err) {
+                        response.send({ success: "false", response: errtxt })
+                    }
+                    else {
+                        response.send({ success: "true" })
+                    }
 
-        });
+            });
+        }else{
+            response.send({ success: "false" });
+        }        
+    }else{
+        response.send({ success: "false" });
+    }
+
 })
 
 app.delete('/delbyadmin', (request, response) => {
