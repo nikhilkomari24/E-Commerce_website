@@ -37,6 +37,8 @@ var aFlag2 = 0;// set when year of birth is 1867
 var j = 0;// item number used in edititem and saveitem functions
 var ename = '';
 var etype = '';
+//newhere
+var eprice = '';
 
 
 
@@ -229,7 +231,7 @@ function confirmPurchase() {
                 else {
                     console.log(resp);
                 }
-        })
+            })
         document.getElementById('cobutton').innerHTML = 'Shopping Cart <i class="fas fa-shopping-cart"></i>';
         document.getElementById('checkoutpage').style.display = "none";
         document.getElementById('secondpage').style.display = "block";
@@ -260,7 +262,8 @@ function gencoLib() {
     //var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
     //var due = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString("en-US", options);
     var cotblString = '';
-    var cotblStringHdr = "<tr><th>NAME</th><th>DUE DATE</th><th>ACTION</th></tr>";
+    //newhere -- var cotblStringHdr = "<tr><th>NAME</th><th>DUE DATE</th><th>ACTION</th></tr>";
+    var cotblStringHdr = "<tr><th>NAME</th><th>DUE DATE</th><th>PRICE</th><th>ACTION</th></tr>";
     if (coList.length <= 0) {
         document.getElementById("coLib").innerHTML = '';
         document.getElementById("coLib").innerHTML = cotblStringHdr;
@@ -271,7 +274,8 @@ function gencoLib() {
             //console.log(currentValue.name);
             var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
             var due = new Date(Date.now() + (currentValue.Due * 24 * 60 * 60 * 1000)).toLocaleDateString("en-US", options);
-            cotblString = cotblString + '<tr><td>' + currentValue.Name + '</td><td><label>' + due + '</label></td><td><button type="button" onclick="remFrmBasket(this)" id="rem_' + (index + 1) + '">Remove</button></td></tr>'; // adding index+1 coz table tr=0 is header
+            //newhere -- cotblString = cotblString + '<tr><td>' + currentValue.Name + '</td><td><label>' + due + '</label></td><td><button type="button" onclick="remFrmBasket(this)" id="rem_' + (index + 1) + '">Remove</button></td></tr>'; // adding index+1 coz table tr=0 is header
+            cotblString = cotblString + '<tr><td>' + currentValue.Name + '</td><td><label>' + due + '</label></td><td><label>' + currentValue.Price + '</label></td><td><button type="button" onclick="remFrmBasket(this)" id="rem_' + (index + 1) + '">Remove</button></td></tr>'; // adding index+1 coz table tr=0 is header 
         });
         document.getElementById("coLib").innerHTML = cotblStringHdr + cotblString;
     }
@@ -304,13 +308,15 @@ function remFrmBasket(i) {
 // function to generate a library
 function genLib() {
     var tblString = '';
-    var tblStringHdr = "<tr><th>ITEM</th><th>NAME</th><th>TYPE</th><th>DUE(IN DAYS)</th><th>ACTION</th></tr>";
+    //newhere -- var tblStringHdr = "<tr><th>ITEM</th><th>NAME</th><th>TYPE</th><th>DUE(IN DAYS)</th><th>ACTION</th></tr>";
+    var tblStringHdr = "<tr><th>ITEM</th><th>NAME</th><th>TYPE</th><th>DUE(IN DAYS)</th><th>PRICE(IN CAD)</th><th>ACTION</th></tr>";
     if (aFlag1 == 1 && aFlag2 == 1) {
         document.getElementById('cobutton').style.display = "none";
         document.getElementById('additembutton').style.display = "block";
         document.getElementById("lib1").innerHTML = '';
         masterList.forEach(function (currentValue, index) {
-            tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><button type="button" id="edit_' + (index + 1) + '" onclick="edititem(this)">Edit</button><button type="button" id="del_' + (index + 1) + '" onclick="delitem(this)">Remove</button></td></tr>'
+            //newhere -- tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><label>' + currentValue.Price + '</label></td><td><button type="button" id="edit_' + (index + 1) + '" onclick="edititem(this)">Edit</button><button type="button" id="del_' + (index + 1) + '" onclick="delitem(this)">Remove</button></td></tr>'
+            tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><label>' + currentValue.Price + '</label></td><td><button type="button" id="edit_' + (index + 1) + '" onclick="edititem(this)">Edit</button><button type="button" id="del_' + (index + 1) + '" onclick="delitem(this)">Remove</button></td></tr>'
         });
         document.getElementById("lib1").innerHTML = tblStringHdr + tblString;
     } else {
@@ -324,7 +330,8 @@ function genLib() {
         else {
             document.getElementById("lib1").innerHTML = '';
             masterList.forEach(function (currentValue, index) {
-                tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><button type="button" onclick="addToBasket(this)" id="add_' + (index + 1) + '">Add to Cart</button></td></tr>'; // adding index+1 coz table tr=0 is header
+                //newhere -- tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><button type="button" onclick="addToBasket(this)" id="add_' + (index + 1) + '">Add to Cart</button></td></tr>'; // adding index+1 coz table tr=0 is header
+                tblString = tblString + '<tr><td><img src="images/' + currentValue.Picture + '"/></td><td>' + currentValue.Name + '</td><td>' + currentValue.Type + '</td><td><label>' + currentValue.Due + '</label></td><td><label>' + currentValue.Price + '</label></td><td><button type="button" onclick="addToBasket(this)" id="add_' + (index + 1) + '">Add to Cart</button></td></tr>'; // adding index+1 coz table tr=0 is header
             });
             document.getElementById("lib1").innerHTML = tblStringHdr + tblString;
         }
@@ -339,11 +346,15 @@ function addItem() {
     var Newcell3 = NewRow.insertCell(2);
     var Newcell4 = NewRow.insertCell(3);
     var Newcell5 = NewRow.insertCell(4);
+    //newhere
+    var Newcell6 = NewRow.insertCell(5);
     Newcell1.innerHTML = '<img src="images/pulse.jpg"/>';
     Newcell2.innerHTML = "<input type = 'text' id = 'addname'/>";
     Newcell3.innerHTML = "<input type = 'text' id = 'addtype'/>";
     Newcell4.innerHTML = "<input type = 'text' id = 'adddue'/>";
-    Newcell5.innerHTML = '<button type="button" id="addnewitem" onclick="addNew()">Save</button><button type="button" id="canceladd" onclick="cancelAdd()">Cancel</button></td></tr>';
+    //newhere
+    Newcell5.innerHTML = "<input type = 'text' id = 'addprice'/>";
+    Newcell6.innerHTML = '<button type="button" id="addnewitem" onclick="addNew()">Save</button><button type="button" id="canceladd" onclick="cancelAdd()">Cancel</button></td></tr>';
     document.getElementById('additembutton').style.display = "none";
 
 }
@@ -353,52 +364,61 @@ function addNew() {
     var newname = document.getElementById("addname").value;
     var newtype = document.getElementById("addtype").value;
     var newdue = document.getElementById("adddue").value;
+    //newhere
+    var newprice = document.getElementById("addprice").value;
     var alphaExp = /^[a-zA-Z]+$/;
     if (newname.match(alphaExp)) {
-        if (newtype.match(alphaExp) && (newtype == 'Book' || newtype == 'CD')) {
+        if (newtype.match(alphaExp) && (newtype == 'BOOK' || newtype == 'CD')) {
             if (!(isNaN(newdue)) && (newdue != '') && (newdue == 30 || newdue == 10)) {
-                //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
-                //masterList.unshift(newdict);
-                var url = '/addbyadmin';
-                //console.log(url)
-                let newitem = JSON.stringify({
-                    Picture: 'pulse.jpg',
-                    Name: newname,
-                    Type: newtype,
-                    Due: newdue
-                })
-                let options = {
-                    method: 'POST',
-                    body: newitem,
-                    //headers: new Headers({
-                    headers: {
-                        'Content-Type': 'application/json',
-                        //'Validated': 'true'
-                    }
-                }
-
-                fetch(url, (options)).then((response) => response.json())
-                    .then(function (resp) {
-                        if (resp["success"]) {
-                            genLibServer().then(function (json) {
-                                masterList = json;
-                                console.log(masterList);
-                                genLib();
-                                document.getElementById('additembutton').style.display = "block";
-                            });
-                        }
-                        else {
-                            console.log(resp);
-                        }
+                //newhere
+                if (!(isNaN(newprice)) && (newprice != '') && (newprice > 0)) {
+                    //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
+                    //masterList.unshift(newdict);
+                    var url = '/addbyadmin';
+                    //console.log(url)
+                    let newitem = JSON.stringify({
+                        Picture: 'pulse.jpg',
+                        Name: newname,
+                        Type: newtype,
+                        Due: newdue,
+                        Price: newprice
                     })
+                    let options = {
+                        method: 'POST',
+                        body: newitem,
+                        //headers: new Headers({
+                        headers: {
+                            'Content-Type': 'application/json',
+                            //'Validated': 'true'
+                        }
+                    }
+
+                    fetch(url, (options)).then((response) => response.json())
+                        .then(function (resp) {
+                            if (resp["success"]) {
+                                genLibServer().then(function (json) {
+                                    masterList = json;
+                                    console.log(masterList);
+                                    genLib();
+                                    document.getElementById('additembutton').style.display = "block";
+                                });
+                            }
+                            else {
+                                console.log(resp);
+                            }
+                        })
+
+                } else {
+                    alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
+                }
             } else {
-                alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
+                alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
             }
         } else {
-            alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
+            alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
         }
     } else {
-        alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD");
+        alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
     }
 
 }
@@ -414,9 +434,13 @@ function edititem(i) {
     ename = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
     etype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
     var duecell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[3];
-    var buttoncell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[4];
+    //newhere
+    var pricecell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[4];
+    var buttoncell = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[5];
     buttoncell.innerHTML = '<button type="button" id="save_click" onclick="saveitem()">Save</button><button type="button" id="cancel_click" onclick="cancelsave()">Cancel</button></td></tr>';
     duecell.innerHTML = "<input type = 'text' id = 'changedue'/>";
+    //newhere
+    pricecell.innerHTML = "<input type = 'text' id = 'changeprice'/>";
     j = i.id.split('_')[1];
 
 }
@@ -426,8 +450,11 @@ function saveitem() {
     //var ename = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1];
     //var etype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2];
     var duevalue = document.getElementById("changedue").value;
-    if (isNaN(duevalue) || duevalue == '') {
-        alert("Please enter a valid number");
+    //newhere
+    var pricevalue = document.getElementById("changeprice").value;
+    //newhere
+    if ((isNaN(duevalue) || duevalue == '') || (isNaN(pricevalue) || pricevalue == '')) {
+        alert("Please enter valid numeric values for due and price.");
     } else {
         //masterList[j - 1].Due = duevalue;
         //genLib();
@@ -436,7 +463,8 @@ function saveitem() {
         let edititem = JSON.stringify({
             Name: ename,
             Type: etype,
-            Due: duevalue
+            Due: duevalue,
+            Price: pricevalue
         })
         let options = {
             method: 'PUT',

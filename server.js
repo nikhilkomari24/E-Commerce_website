@@ -52,7 +52,6 @@ function validateType(type) {
         case "cd":
             return true;
         default:
-            //errMsg += 'Type can be either Book/CD||'
             return false;
     }
 }
@@ -61,7 +60,15 @@ function validateType(type) {
 function validateDue(dueValue) {
     var filter = new RegExp('^[0-9]+$');
     if (!filter.test(dueValue)) {
-        //errMsg += 'Due days should be a integer||'
+        return false;
+    }
+    return true;
+}
+
+//function to validate price value
+function validatePrice(priceValue) {
+    var filter = new RegExp('^[0-9]+$');
+    if (!filter.test(priceValue)) {
         return false;
     }
     return true;
@@ -88,19 +95,25 @@ app.post('/addbyadmin', (request, response) => {
     aName = request.body.Name
     aDue = request.body.Due
     aType = request.body.Type
+    aPrice = request.body.Price
     if (inputAlphabet(aName)) {
         if (validateDue(aDue)) {
             if (validateType(aType)) {
-                mongoose.connection.db.collection('masterList').insertOne(request.body, function (err, output) {
-                    if (err) {
-                        response.send({ success: "false" });
-                    }
-                    else {
-                        response.send({ success: "true" })
+                if (validatePrice(aPrice)) {
+                    mongoose.connection.db.collection('masterList').insertOne(request.body, function (err, output) {
+                        if (err) {
+                            response.send({ success: "false" });
+                        }
+                        else {
+                            response.send({ success: "true" })
 
-                    }
+                        }
 
-                });
+                    });
+                } else {
+                    response.send({ success: "false" });
+                }
+
             } else {
                 response.send({ success: "false" });
             }
@@ -116,20 +129,25 @@ app.post('/addbyadmin', (request, response) => {
 app.put('/editbyadmin', (request, response) => {
     if (validateType(request.body.Type)) {
         if (validateDue(request.body.Due)) {
-            mongoose.connection.db.collection('masterList')
-                .updateOne({ Name: request.body.Name, Type: request.body.Type }, { $set: { Due: request.body.Due } }, {}, function (err, output) {
-                    if (err) {
-                        response.send({ success: "false", response: errtxt })
-                    }
-                    else {
-                        response.send({ success: "true" })
-                    }
+            if (validatePrice(request.body.Price)) {
+                mongoose.connection.db.collection('masterList')
+                    .updateOne({ Name: request.body.Name, Type: request.body.Type }, { $set: { Due: request.body.Due , Price: request.body.Price }}, {}, function (err, output) {
+                        if (err) {
+                            response.send({ success: "false", response: errtxt })
+                        }
+                        else {
+                            response.send({ success: "true" })
+                        }
 
-            });
-        }else{
+                });
+            } else {
+                response.send({ success: "false" });
+            }
+
+        } else {
             response.send({ success: "false" });
-        }        
-    }else{
+        }
+    } else {
         response.send({ success: "false" });
     }
 
