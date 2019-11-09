@@ -1,16 +1,3 @@
-//var masterList = [
-//    { Name: 'HOBBIT', Due: '30', Type: 'Book', Picture: 'hobbit.jpg' },
-//    { Name: 'HUSH', Due: '30', Type: 'Book', Picture: 'Hush.jpg' },
-//    { Name: 'HOUND', Due: '30', Type: 'Book', Picture: 'hound.jpg' },
-//    { Name: 'ORIENTEXPRESS', Due: '30', Type: 'Book', Picture: 'orientexpress.jpg' },
-//    { Name: 'PYTHON', Due: '30', Type: 'Book', Picture: 'python.jpg' },
-//    { Name: 'XMEN', Due: '10', Type: 'CD', Picture: 'XMEN.jpg' },
-//    { Name: 'TRANSFORMERS', Due: '10', Type: 'CD', Picture: 'transformers.jpg' },
-//    { Name: 'WARHORSE', Due: '10', Type: 'CD', Picture: 'warhorse.jpg' },
-//    { Name: 'LIFE', Due: '10', Type: 'CD', Picture: 'life.jpg' },
-//    { Name: 'ALITA', Due: '10', Type: 'CD', Picture: 'alita.jpg' }
-//];
-
 var langArr = [
     { ENG: 'HOBBIT', FR: 'HOBBIT' },
     { ENG: 'HUSH', FR: 'SILENCE' },
@@ -39,6 +26,20 @@ var ename = '';
 var etype = '';
 //newhere
 var eprice = '';
+
+window.setInterval(dataPolling, 2000);
+
+function dataPolling() {
+    if (aFlag1 == 1 && aFlag2 == 1) {
+
+    } else {
+        genLibServer().then(function (resp) {
+            masterList = resp;
+            genLib();
+        });
+    }
+
+}
 
 
 
@@ -109,8 +110,8 @@ function formValidation() {
 async function genLibServer() {
 
     //var respObj = null, isValid = false;
-    //var url = location.href.concat("getAllItems").replace('#', '');
-    var url = '/genlibrary';
+    //var url = '/genlibrary';
+    var url = location.href.concat("genlibrary").replace('#', '');
     let options = {
         method: 'GET',
         //headers: new Headers({
@@ -205,7 +206,8 @@ function confirmPurchase() {
 
         var newarr = [];
         coList.forEach(x => { newarr.push(x.Name) });
-        var url = '/purchased';
+        //var url = '/purchased';
+        var url = location.href.concat("purchased").replace('#', '');
         //console.log(url)
         let puritem = JSON.stringify({
             Name: newarr
@@ -367,50 +369,48 @@ function addNew() {
     //newhere
     var newprice = document.getElementById("addprice").value;
     var alphaExp = /^[a-zA-Z]+$/;
-    if (newname.match(alphaExp)) {
-        if (newtype.match(alphaExp) && (newtype == 'BOOK' || newtype == 'CD')) {
-            if (!(isNaN(newdue)) && (newdue != '') && (newdue == 30 || newdue == 10)) {
-                //newhere
-                if (!(isNaN(newprice)) && (newprice != '') && (newprice > 0)) {
-                    //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
-                    //masterList.unshift(newdict);
-                    var url = '/addbyadmin';
-                    //console.log(url)
-                    let newitem = JSON.stringify({
-                        Picture: 'pulse.jpg',
-                        Name: newname,
-                        Type: newtype,
-                        Due: newdue,
-                        Price: newprice
-                    })
-                    let options = {
-                        method: 'POST',
-                        body: newitem,
-                        //headers: new Headers({
-                        headers: {
-                            'Content-Type': 'application/json',
-                            //'Validated': 'true'
-                        }
+    //if (newname.match(alphaExp)) {
+    if (newtype.match(alphaExp) && (newtype == 'Book' || newtype == 'CD')) {
+        if (!(isNaN(newdue)) && (newdue != '') && (newdue == 30 || newdue == 10)) {
+            //newhere
+            if (!(isNaN(newprice)) && (newprice != '') && (newprice > 0)) {
+                //newdict = { Name: newname, Due: newdue, Type: newtype, Picture: 'pulse.jpg' };
+                //masterList.unshift(newdict);
+                //var url = '/addbyadmin';
+                var url = location.href.concat("addbyadmin").replace('#', '');
+                //console.log(url)
+                let newitem = JSON.stringify({
+                    Picture: 'pulse.jpg',
+                    Name: newname,
+                    Type: newtype,
+                    Due: newdue,
+                    Price: newprice
+                })
+                let options = {
+                    method: 'POST',
+                    body: newitem,
+                    //headers: new Headers({
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //'Validated': 'true'
                     }
-
-                    fetch(url, (options)).then((response) => response.json())
-                        .then(function (resp) {
-                            if (resp["success"]) {
-                                genLibServer().then(function (json) {
-                                    masterList = json;
-                                    console.log(masterList);
-                                    genLib();
-                                    document.getElementById('additembutton').style.display = "block";
-                                });
-                            }
-                            else {
-                                console.log(resp);
-                            }
-                        })
-
-                } else {
-                    alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
                 }
+
+                fetch(url, (options)).then((response) => response.json())
+                    .then(function (resp) {
+                        if (resp["success"]) {
+                            genLibServer().then(function (json) {
+                                masterList = json;
+                                console.log(masterList);
+                                genLib();
+                                document.getElementById('additembutton').style.display = "block";
+                            });
+                        }
+                        else {
+                            console.log(resp);
+                        }
+                    })
+
             } else {
                 alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
             }
@@ -420,6 +420,9 @@ function addNew() {
     } else {
         alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
     }
+    //} else {
+    //    alert(" Please enter valid values. Type should be either 'BOOK' or 'CD' and Due should be 30 for books and 10 for CD. Price should be a numeric greater than 0.");
+    //}
 
 }
 
@@ -458,7 +461,8 @@ function saveitem() {
     } else {
         //masterList[j - 1].Due = duevalue;
         //genLib();
-        var url = '/editbyadmin';
+        //var url = '/editbyadmin';
+        var url = location.href.concat("editbyadmin").replace('#', '');
         //console.log(url)
         let edititem = JSON.stringify({
             Name: ename,
@@ -502,7 +506,8 @@ function cancelsave() {
 function delitem(i) {
     var dname = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[1].innerHTML;
     var dtype = document.getElementById("lib1").rows[i.id.split("_")[1]].cells[2].innerHTML;
-    var url = '/delbyadmin';
+    //var url = '/delbyadmin';
+    var url = location.href.concat("delbyadmin").replace('#', '');
     //console.log(url)
     let delitem = JSON.stringify({
         Name: dname,
